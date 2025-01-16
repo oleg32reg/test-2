@@ -9,7 +9,7 @@ export const routes: Routes = [
       import('@pages/main-page/main-page.component').then(
         (c) => c.MainPageComponent
       ),
-    title: 'Список пользователей | TEST',
+    title: 'Прогноз погоды на 5 дней',
     children: [],
   },
   {
