@@ -1,1 +1,15 @@
-<p>main-page works!</p>
+<section class="or-section-weather">
+  <div class="or-weather">
+    <div class="or-weather__title">
+       <h2>WEATHER</h2>
+      </div>
+    <div class="or-weather__form">
+      <app-autocomplete [(dataCity)]="dataCity"/>
+    </div>
+    @if(dataCityComputed().name && dataCityComputed().lon && dataCityComputed().lat){
+      <div class="or-weather__view">
+        <app-table-weather [dataCity]="dataCityComputed()"/>
+      </div>
+    }
+  </div>
+</section>

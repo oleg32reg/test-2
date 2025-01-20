@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  --black: #333333;
+  --white: #ffffff;
+  --white-rgba: 255,255,255;
+  --gray-1: #f2f2f2;
+  --gray-2: #858585;
+  --error: #b00020;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes animateLoder {
+  0% {
+    transform: translateX(-25px);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.or-weather-view-loader {
+  height: 16px;
+  width: 100%;
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+  padding: 0;
+  min-height: 16px;
+  background-color: rgba($color: var(--white-rgba), $alpha: 0.8);
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--gray-2);
+    top: 50%;
+    left: 50%;
+    margin-top: -3px;
+    transform: translateX(-100px);
+    transition: background-color 0.5s;
+    animation: animateLoder .5s infinite ease-in-out;
+  }
+
+  &:after {
+    animation-direction: reverse;
+    background-color: var(--black);
+  }
+}

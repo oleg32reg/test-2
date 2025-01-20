@@ -1,0 +1,39 @@
+<form
+  class="or-autocomplete-form"
+  [name]="searchCityForm"
+  [formGroup]="searchCityForm"
+>
+  <div class="or-autocomplete-form__field">
+    <div class="or-weather-form-field-autocomplete" [class]="{'_loading': loaderSignalComputed()}">
+      <div class="or-weather-form-field-autocomplete__inner">
+        <div class="or-weather-form-field-autocomplete__input-wrap">
+          <input class="or-weather-form-field-autocomplete__input" type="text" placeholder="Начните вводить название города" name="fieldName"
+            [formControlName]="'fieldName'" [value]="dataCity().name"
+          />
+          @if(errorSignalComputed().status){
+            <span class="or-weather-form-field-autocomplete-error">{{ errorSignalComputed().text }}</span>
+          } @else if(isMessageAutocompleteComputed()){
+            <span class="or-weather-form-field-autocomplete-empty"> Совпадений не найдено </span>
+          }
+        </div>
+        <button class="or-weather-form-field-autocomplete__button" (click)="onReset()" [disabled]="loaderSignalComputed()">Сбросить</button>
+        <div class="or-weather-view-loader"></div>
+      </div>
+      @if(isOpenAutocomplete()){
+        <div class="or-weather-form-field-autocomplete__list">
+          @if( (cities$|async)?.length ){
+            <ul class="or-weather-form-field-autocomplete-list">
+              @for(city of cities$|async; track $index){
+                <li class="or-weather-form-field-autocomplete-list__li" (click)="selectCity(city)">
+                  {{city.name}}
+                  @if(city?.state && city.name !== city.state){, {{ city.state}} }
+                  <span class="or-weather-form-field-autocomplete-country">{{ city.country}}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</form>

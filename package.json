@@ -8,9 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "g-pages": "ng generate c pages/not-found-page",
-    "g-component": "ng generate c components/not-found",
-    "g-service": "ng generate s services/users",
-    "g-interface": "ng generate i interfaces/api"
+    "g-component": "ng generate c components/table-weather",
+    "g-service": "ng generate s services/api",
+    "g-interface": "ng generate i interfaces/weather"
   },
   "private": true,
   "dependencies": {

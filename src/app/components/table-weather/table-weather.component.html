@@ -1,0 +1,92 @@
+<div class="or-weather-view">
+  @if(dataCityComputed().name){
+    <div class="or-weather-view__title">
+      @if(dataCityComputed().name){
+        {{dataCityComputed().name}}
+      } @else {
+        &nbsp;
+      }
+    </div>
+  }
+  @if( (loader$|async)){
+    <div class="or-weather-view__loader">
+      <div class="or-weather-view-loader"></div>
+    </div>
+  } @else if( dataWeatherComputed().length){
+    <div class="or-weather-view__items">
+      <div class="or-weather-view-table">
+        <div class="or-weather-view-table__thead">
+          <div class="or-weather-view-table__thead-th">
+            Time
+          </div>
+          <div class="or-weather-view-table__thead-th">
+            Temperature
+          </div>
+          <div class="or-weather-view-table__thead-th">
+            Feels Like
+          </div>
+          <div class="or-weather-view-table__thead-th">
+            Weather
+          </div>
+          <div class="or-weather-view-table__thead-th">
+            Precipitation (%)
+          </div>
+          <div class="or-weather-view-table__thead-th">
+            Cloudiness (%)
+          </div>
+        </div>
+        @for(item of dataWeather(); track item.dt){
+        <div class="or-weather-view-table__row">
+          <div class="or-weather-view-table__row-cell">
+            @if(item.dt_txt){
+              {{ item.dt_txt | date : 'dd-MM HH:mm' }}
+            } @else{
+            -
+            }
+          </div>
+          <div class="or-weather-view-table__row-cell">
+            @if(item.main.temp){
+              {{ item.main.temp }}
+            } @else{
+              -
+            }
+          </div>
+          <div class="or-weather-view-table__row-cell">
+            @if(item.main.feels_like){
+            {{ item.main.feels_like }}
+            } @else{
+            -
+            }
+          </div>
+          <div class="or-weather-view-table__row-cell">
+            @if(item.weather[0].main){
+            {{ item.weather[0].main }}
+            } @else{
+            -
+            }
+          </div>
+          <div class="or-weather-view-table__row-cell">
+            {{ item.pop }}
+          </div>
+          <div class="or-weather-view-table__row-cell">
+            {{ item.clouds.all }}
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+  } @else if (!dataWeatherComputed().length) {
+    @if((dataState$ | async)?.status){
+      <div class="or-weather-view-state">
+          @if((dataState$ | async)?.type === 'error'){
+            <span class="or-weather-view-state__error"> {{(dataState$ | async)?.text}} </span>
+          } @else {
+            <span class="or-weather-view-state__message">Данные не найдены...</span>
+          }
+        </div>
+    }
+  }
+  @else{}
+
+</div>

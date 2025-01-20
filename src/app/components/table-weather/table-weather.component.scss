@@ -1,0 +1,63 @@
+:host{
+
+  .or-weather-view {
+    &__title {
+      text-align: center;
+      font-weight: 500;
+      font-size: 22px;
+      padding: 16px;
+    }
+
+    &__items {
+      border: 1px solid var(--gray-1);
+    }
+  }
+
+  .or-weather-view-table {
+
+    &__thead,
+    &__row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    &__thead {
+      background-color: var(--gray-1);
+
+      &-th {
+        min-height: 30px;
+        padding: 4px;
+        align-items: center;
+        align-content: center;
+        min-width: 115px;
+      }
+    }
+
+    &__row {
+      border-bottom: 1px solid var(--gray-1);
+      &:last-child{
+        border-bottom-color: transparent;
+      }
+      &-cell {
+        align-items: center;
+        align-content: center;
+        padding: 4px;
+        min-height: 48px;
+        min-width: 115px;
+      }
+    }
+  }
+  .or-weather-view-state{
+    font-size: 10px;
+    line-height: 1.1px;
+    text-align: center;
+    padding: 4px 0;
+    color: var(--gray-2);
+    &__error{
+      color: var(--error);
+    }
+  }
+}
