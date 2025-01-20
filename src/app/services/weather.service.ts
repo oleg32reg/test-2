@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { GET_PARAMS, GET_PARAMS_PARAMS } from '@interfaces/api';
 import { CityCoordsName, ErrorStateAutoComplete } from '@interfaces/weather';
+import { retry } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -39,10 +40,12 @@ export class WeatherService {
       q: name,
       limit: 10,
     };
-    return this.apiService.GET({
-      url: 'http://api.openweathermap.org/geo/1.0/direct',
-      params,
-    });
+    return this.apiService
+      .GET({
+        url: 'http://api.openweathermap.org/geo/1.0/direct',
+        params,
+      })
+      .pipe(retry(1));
   }
   /**
    * Получение погоды по данным городу
@@ -59,6 +62,6 @@ export class WeatherService {
     return this.apiService.GET({
       url: 'https://api.openweathermap.org/data/2.5/forecast',
       params,
-    });
+    }).pipe(retry(1));
   }
 }

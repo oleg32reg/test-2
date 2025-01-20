@@ -10,7 +10,7 @@ export const routes: Routes = [
         (c) => c.MainPageComponent
       ),
     title: 'Прогноз погоды на 5 дней',
-    children: [],
+    data: { lat:0, lon:0 }
   },
   {
     path: '**',

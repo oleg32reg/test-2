@@ -8,7 +8,7 @@
       <div class="or-weather-form-field-autocomplete__inner">
         <div class="or-weather-form-field-autocomplete__input-wrap">
           <input class="or-weather-form-field-autocomplete__input" type="text" placeholder="Начните вводить название города" name="fieldName"
-            [formControlName]="'fieldName'" [value]="dataCity().name"
+            [formControlName]="'fieldName'" [value]="dataCityComputed().name"
           />
           @if(errorSignalComputed().status){
             <span class="or-weather-form-field-autocomplete-error">{{ errorSignalComputed().text }}</span>

@@ -10,11 +10,12 @@
 
     &__items {
       border: 1px solid var(--gray-1);
+      overflow-x: auto;
     }
   }
 
   .or-weather-view-table {
-
+    min-width: calc(115px * 6);
     &__thead,
     &__row {
       display: grid;

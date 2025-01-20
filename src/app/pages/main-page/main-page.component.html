@@ -6,7 +6,7 @@
     <div class="or-weather__form">
       <app-autocomplete [(dataCity)]="dataCity"/>
     </div>
-    @if(dataCityComputed().name && dataCityComputed().lon && dataCityComputed().lat){
+    @if(dataCityComputed() && dataCityComputed().name && dataCityComputed().lon && dataCityComputed().lat){
       <div class="or-weather__view">
         <app-table-weather [dataCity]="dataCityComputed()"/>
       </div>

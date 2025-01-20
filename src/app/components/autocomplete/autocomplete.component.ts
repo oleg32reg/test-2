@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, WritableSignal, computed, model, signal } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import { AsyncPipe, Location } from '@angular/common';
+import { HttpErrorResponse} from '@angular/common/http';
+import { ActivatedRoute, Params, Router, RouterState } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -44,6 +45,12 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
       disabled: this.loaderSignalComputed(),
     }),
   });
+  dataCityComputed = computed(() => {
+    // this.setParamsCityInRoute(this.dataCity());
+    this.setParamsCityInRoute(this.dataCity());
+    return this.dataCity();
+  });
+
   searchCityFormControls = {
     fieldName: this.searchCityForm.get('fieldName'),
   };
@@ -54,12 +61,15 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private weatherService: WeatherService
+    private weatherService: WeatherService,
+    private router: Router,
+    private aRouter: ActivatedRoute,
+    private loc: Location
   ) {}
-    /**
-     * Блокирование формы
-     * @param isState флаг блокирования
-     */
+  /**
+   * Блокирование формы
+   * @param isState флаг блокирования
+   */
   lockForm(isState?: boolean) {
     const isResultState: boolean = isState || false;
     if (isState) {
@@ -69,24 +79,37 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
     }
     this.loaderSignal.set(isResultState);
   }
+
   /**
-   * Выбор города из списка
+   * Выбор города из списка и склеивание названия
    * @param city данные города
    */
   selectCity(city: City) {
     let cityName = city.name;
     if (city.state) {
-      cityName += `, ${city.state}`;
+      cityName += `,${city.state}`;
     }
     if (city.country) {
-      cityName += `, ${city.country}`;
+      cityName += `,${city.country}`;
     }
     const paramCity: CityCoordsName = {
       lat: city.lat,
       lon: city.lon,
       name: cityName,
     };
-    this.dataCity.update((oldValue) => paramCity);
+    this.syncCityParams(paramCity);
+  }
+  /**
+   * Делегирование в модель данных города
+   * @param paramCity данные о городе
+   */
+  syncCityParams(paramCity: CityCoordsName) {
+    if (this.searchCityFormControls.fieldName?.value !== paramCity.name){
+      this.searchCityFormControls.fieldName?.patchValue(paramCity.name, {
+        emitEvent: false, // отключение события изменения значения в инпуте(при использования слушателя "valueChanges")
+      });
+    }
+      this.dataCity.update((oldValue) => paramCity);
     this.cities$$.next([]);
     this.isOpenAutocomplete.set(false);
   }
@@ -143,9 +166,9 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
    * Сброс данных
    */
   resetDataAutocomplete() {
-    this.dataCity.update((oldValue) =>
-      this.weatherService.getDefaultDataAutocomplete()
-    );
+    const defaultValueCity:CityCoordsName = this.weatherService.getDefaultDataAutocomplete();
+    this.dataCity.update((oldValue) => defaultValueCity);
+    // this.setParamsCityInRoute(defaultValueCity);
   }
   /**
    * Сброс общего состояния
@@ -156,8 +179,34 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
     this.isOpenAutocomplete.set(false);
     this.isAutocompleteEmpty.set(true);
   }
-
+  /**
+   * Установка параметров выбранного города в запрос
+   * @param cityParams параметры выбранного города
+   */
+  setParamsCityInRoute(cityParams: CityCoordsName) {
+    const queryParams = cityParams.name && cityParams.lat && cityParams.lon ? cityParams : {};
+    const urlWidthParams = this.router
+      .createUrlTree([], { relativeTo: this.aRouter, queryParams})
+      .toString();
+    this.loc.go(urlWidthParams);
+  }
   ngOnInit(): void {
+    // считвание параметров из урла, если есть все необходимые параметры: lat,lon,name
+    this.aRouter.queryParams.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (routeParams: Params) => {
+        // const codec = new HttpUrlEncodingCodec();
+        const currentCity: CityCoordsName = {
+          lat: routeParams['lat'],
+          lon: routeParams['lon'],
+          // name: codec.encodeValue(routeParams['name'])
+          name: routeParams['name'],
+        };
+        if (currentCity.lat && currentCity.lon && currentCity.name) {
+          this.syncCityParams(currentCity);
+        }
+      },
+    });
+
     this.searchCityFormControls.fieldName?.valueChanges
       .pipe(debounceTime(500))
       .pipe(takeUntil(this.destroy$))
